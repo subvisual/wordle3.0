@@ -1,3 +1,5 @@
+import { Typography } from "@mui/joy";
+
 export const HomePage = () => {
-  return <>hello world</>;
+  return <Typography>hello world</Typography>;
 };
