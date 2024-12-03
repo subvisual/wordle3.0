@@ -10,7 +10,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiProvider } from "wagmi";
 import { anvil, sepolia } from "wagmi/chains";
 
-const projectId = process.env.REACT_PUBLIC_PROJECT_ID;
+const projectId = import.meta.env.VITE_PUBLIC_PROJECT_ID;
 if (!projectId) {
   throw new Error("Project Id is not defined.");
 }
