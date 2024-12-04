@@ -7,8 +7,10 @@ type Props = {
 
 export const Container = ({ children }: Props) => {
   return (
-    <Stack component="main" sx={{ width: "100%", alignItems: "center", mt: 2 }}>
-      {children}
+    <Stack sx={{ width: "100%", alignItems: "center" }}>
+      <Stack component="main" sx={{ maxWidth: { xs: "90%", sm: 400 }, alignItems: "center", mt: 2, gap: 4 }}>
+        {children}
+      </Stack>
     </Stack>
   );
 };
