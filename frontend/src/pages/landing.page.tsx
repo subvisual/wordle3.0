@@ -1,10 +1,10 @@
-import { Stack } from "@mui/joy";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Container } from "../components/container";
 
 export const LandingPage = () => {
   return (
-    <Stack>
+    <Container>
       <ConnectButton />
-    </Stack>
+    </Container>
   );
 };
