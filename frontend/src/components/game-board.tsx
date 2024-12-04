@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/joy";
+import { Box, Button, Grid, Stack } from "@mui/joy";
 import { useState } from "react";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -27,30 +27,48 @@ export const GameBoard = () => {
   };
 
   return (
-    <Box>
-      <Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      {/* Word */}
+      <Grid container sx={{ justifyContent: "space-between" }}>
         {Array.from({ length: maxLetters }).map((_, index) => (
-          <Box component={Button} key={index}>
-            {word[index]}
-          </Box>
+          <Grid
+            component={Stack}
+            key={index}
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              border: "1px solid",
+              height: { xs: 65, sm: 75 },
+              width: { xs: 65, sm: 75 },
+              fontSize: 32,
+              fontWeight: "bold"
+            }}
+          >
+            {word[index] || ""}
+          </Grid>
         ))}
-      </Box>
+      </Grid>
 
-      <Box>
+      {/* Letters + Buttons */}
+      <Grid container spacing={0.5} columns={6} sx={{ justifyContent: "center" }}>
         {ALPHABET.map(letter => (
-          <Button key={letter} onClick={() => handleLetterClick(letter)} disabled={word.length === maxLetters}>
-            {letter}
-          </Button>
+          <Grid xs={1} key={letter}>
+            <Button size="lg" fullWidth onClick={() => handleLetterClick(letter)} color="neutral">
+              {letter}
+            </Button>
+          </Grid>
         ))}
-
-        <Button onClick={handleDelete} disabled={word.length <= 0}>
-          Delete
-        </Button>
-
-        <Button onClick={handleSubmit} disabled={word.length !== maxLetters}>
-          Submit
-        </Button>
-      </Box>
+        <Grid xs={2}>
+          <Button size="lg" fullWidth onClick={handleDelete} color="neutral">
+            Delete
+          </Button>
+        </Grid>
+        <Grid xs={2}>
+          <Button size="lg" fullWidth onClick={handleSubmit} disabled={word.length !== maxLetters} color="success">
+            Submit
+          </Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
