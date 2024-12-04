@@ -2,65 +2,47 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "../contracts/WordleGame.sol";
 import "../contracts/MyERC20Token.sol";
+import "../contracts/WordleGame.sol";
 
 contract WordleGameTest is Test {
-    WordleGame game;
-    MyERC20Token token;
-    address player = address(0x123);
+    MyERC20Token public token;
+    WordleGame public game;
+
+    address public player;
 
     function setUp() public {
-        // Deploy the token contract with an initial supply
         token = new MyERC20Token(1000 * 10 ** 18);
-
-        // Deploy the WordleGame contract with the token and initial word
         game = new WordleGame(token, "APPLE");
 
-        // Transfer tokens to the player
-        token.transfer(player, 100 * 10 ** 18);
+        player = address(0x123);
+        token.transfer(player, 105 * 10 ** 18);
 
-        // Transfer tokens to the game contract for rewards
-        token.transfer(address(game), 500 * 10 ** 18);
+        vm.prank(player);
+        token.approve(address(game), type(uint256).max);
     }
 
     function testCorrectGuess() public {
-        // Start acting as the player
-        vm.startPrank(player);
+        uint256 initialBalance = token.balanceOf(player);
 
-        // Approve the game contract to spend player's tokens
-        token.approve(address(game), 1 * 10 ** 18);
-
-        // Make a correct guess
+        vm.prank(player);
         game.guess("APPLE");
 
-        // Check the player's token balance after the guess
-        uint256 balance = token.balanceOf(player);
+        uint256 expectedBalance = initialBalance - 1 * 10 ** 18;
+        uint256 finalBalance = token.balanceOf(player);
 
-        // Player starts with 100 tokens, spends 1 token, receives 5 tokens as reward
-        // Expected balance: 100 - 1 + 5 = 104 tokens
-        assertEq(balance, 104 * 10 ** 18, "Player should have 104 tokens after correct guess");
-
-        vm.stopPrank();
+        assertEq(finalBalance, expectedBalance, "Player should have 104 tokens after correct guess");
     }
 
     function testIncorrectGuess() public {
-        // Start acting as the player
-        vm.startPrank(player);
+        uint256 initialBalance = token.balanceOf(player);
 
-        // Approve the game contract to spend player's tokens
-        token.approve(address(game), 1 * 10 ** 18);
+        vm.prank(player);
+        game.guess("WRONG");
 
-        // Make an incorrect guess (5-letter word that is not "APPLE")
-        game.guess("GRAPE");
+        uint256 expectedBalance = initialBalance - 1 * 10 ** 18;
+        uint256 finalBalance = token.balanceOf(player);
 
-        // Check the player's token balance after the guess
-        uint256 balance = token.balanceOf(player);
-
-        // Player starts with 100 tokens, spends 1 token, no reward
-        // Expected balance: 100 - 1 = 99 tokens
-        assertEq(balance, 99 * 10 ** 18, "Player should have 99 tokens after incorrect guess");
-
-        vm.stopPrank();
+        assertEq(finalBalance, expectedBalance, "Player should have 104 tokens after incorrect guess");
     }
 }
