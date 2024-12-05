@@ -1,10 +1,12 @@
 import { Box, Button, Grid, Stack } from "@mui/joy";
 import { useState } from "react";
+import { gameContract } from "../services/ethers";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export const GameBoard = () => {
   const [word, setWord] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const maxLetters = 5;
 
   const handleLetterClick = (letter: string) => {
@@ -19,10 +21,23 @@ export const GameBoard = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (word.length === maxLetters) {
-      alert(word);
-      setWord("");
+      try {
+        setIsSubmitting(true);
+
+        const tx = await gameContract.guess(word.toUpperCase(), {
+          gasLimit: 300000
+        });
+        console.log("Transaction sent:", tx.hash); // remove later
+        await tx.wait();
+        console.log("Word submitted."); // remove later
+      } catch (err: any) {
+        console.error(err);
+      } finally {
+        setIsSubmitting(false);
+        setWord("");
+      }
     }
   };
 
@@ -53,18 +68,31 @@ export const GameBoard = () => {
       <Grid container spacing={0.5} columns={6} sx={{ justifyContent: "center" }}>
         {ALPHABET.map(letter => (
           <Grid xs={1} key={letter}>
-            <Button size="lg" fullWidth onClick={() => handleLetterClick(letter)} color="neutral">
+            <Button
+              size="lg"
+              fullWidth
+              onClick={() => handleLetterClick(letter)}
+              disabled={isSubmitting}
+              color="neutral"
+            >
               {letter}
             </Button>
           </Grid>
         ))}
         <Grid xs={2}>
-          <Button size="lg" fullWidth onClick={handleDelete} color="neutral">
+          <Button size="lg" fullWidth onClick={handleDelete} disabled={isSubmitting} color="neutral">
             Delete
           </Button>
         </Grid>
         <Grid xs={2}>
-          <Button size="lg" fullWidth onClick={handleSubmit} disabled={word.length !== maxLetters} color="success">
+          <Button
+            size="lg"
+            fullWidth
+            onClick={handleSubmit}
+            disabled={word.length !== maxLetters}
+            loading={isSubmitting}
+            color="success"
+          >
             Submit
           </Button>
         </Grid>
