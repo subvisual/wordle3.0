@@ -7,7 +7,7 @@ import { App } from "./router/app";
 
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-import { WagmiProvider } from "wagmi";
+import { http, WagmiProvider } from "wagmi";
 import { anvil, sepolia } from "wagmi/chains";
 
 const projectId = import.meta.env.VITE_PUBLIC_PROJECT_ID;
@@ -18,7 +18,10 @@ if (!projectId) {
 const config = getDefaultConfig({
   appName: "Wordle",
   projectId: projectId,
-  chains: [sepolia, anvil]
+  chains: [sepolia, anvil],
+  transports: {
+    [anvil.id]: http(import.meta.env.VITE_ANVIL_RPC_URL)
+  }
 });
 
 const queryClient = new QueryClient();

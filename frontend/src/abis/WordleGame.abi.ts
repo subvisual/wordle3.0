@@ -5,12 +5,5 @@ export const WordleGameABI = [
     name: "guess",
     outputs: [],
     type: "function"
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "guessFee",
-    outputs: [{ name: "", type: "uint256" }],
-    type: "function"
   }
 ];

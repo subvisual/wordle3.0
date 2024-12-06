@@ -1,43 +1,28 @@
 import { Box, Button, Grid, Stack } from "@mui/joy";
 import { useState } from "react";
-import { gameContract } from "../services/ethers";
+import { useWordleGame } from "../hooks/useWordleGame";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export const GameBoard = () => {
   const [word, setWord] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const maxLetters = 5;
+  const { makeGuess, isPending } = useWordleGame();
 
   const handleLetterClick = (letter: string) => {
-    if (word.length < maxLetters) {
-      setWord(prev => prev + letter);
-    }
+    if (word.length < 5) setWord(prev => prev + letter);
   };
 
   const handleDelete = () => {
-    if (word.length > 0) {
-      setWord(prev => prev.slice(0, -1));
-    }
+    if (word.length > 0) setWord(prev => prev.slice(0, -1));
   };
 
   const handleSubmit = async () => {
-    if (word.length === maxLetters) {
-      try {
-        setIsSubmitting(true);
-
-        const tx = await gameContract.guess(word.toUpperCase(), {
-          gasLimit: 300000
-        });
-        console.log("Transaction sent:", tx.hash); // remove later
-        await tx.wait();
-        console.log("Word submitted."); // remove later
-      } catch (err: any) {
-        console.error(err);
-      } finally {
-        setIsSubmitting(false);
-        setWord("");
-      }
+    try {
+      makeGuess(word.toUpperCase());
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setWord("");
     }
   };
 
@@ -45,7 +30,7 @@ export const GameBoard = () => {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       {/* Word */}
       <Grid container sx={{ justifyContent: "space-between" }}>
-        {Array.from({ length: maxLetters }).map((_, index) => (
+        {Array.from({ length: 5 }).map((_, index) => (
           <Grid
             component={Stack}
             key={index}
@@ -59,7 +44,7 @@ export const GameBoard = () => {
               fontWeight: "bold"
             }}
           >
-            {word[index] || ""}
+            {word[index]}
           </Grid>
         ))}
       </Grid>
@@ -68,19 +53,13 @@ export const GameBoard = () => {
       <Grid container spacing={0.5} columns={6} sx={{ justifyContent: "center" }}>
         {ALPHABET.map(letter => (
           <Grid xs={1} key={letter}>
-            <Button
-              size="lg"
-              fullWidth
-              onClick={() => handleLetterClick(letter)}
-              disabled={isSubmitting}
-              color="neutral"
-            >
+            <Button size="lg" fullWidth onClick={() => handleLetterClick(letter)} color="neutral" disabled={isPending}>
               {letter}
             </Button>
           </Grid>
         ))}
         <Grid xs={2}>
-          <Button size="lg" fullWidth onClick={handleDelete} disabled={isSubmitting} color="neutral">
+          <Button size="lg" fullWidth onClick={handleDelete} color="neutral" disabled={isPending}>
             Delete
           </Button>
         </Grid>
@@ -89,8 +68,8 @@ export const GameBoard = () => {
             size="lg"
             fullWidth
             onClick={handleSubmit}
-            disabled={word.length !== maxLetters}
-            loading={isSubmitting}
+            loading={isPending}
+            disabled={word.length < 5}
             color="success"
           >
             Submit
