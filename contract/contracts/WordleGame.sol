@@ -10,15 +10,19 @@ contract WordleGame {
 
     event GuessMade(address indexed player, string guess, bool isCorrect);
 
+    mapping (string=>bool) public guesses;
+
     constructor(WordleToken _token) {
         token = _token;
     }
 
-    function guess(string memory userGuess) public {
+    function guess(string memory userGuess) public returns (bool) {
         require(bytes(userGuess).length == 5, "Guess must be 5 letters long");
         require(token.transferFrom(msg.sender, address(this), GUESS_FEE), "Token transfer failed");
 
         bool isCorrect = keccak256(abi.encodePacked(userGuess)) == keccak256(abi.encodePacked(FIXED_WORD));
         emit GuessMade(msg.sender, userGuess, isCorrect);
+        guesses[userGuess] = isCorrect;
+        return isCorrect;
     }
 }

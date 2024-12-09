@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "all": "concurrently \"anvil\" \"cd contract && forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast --private-key 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a\" \"cd frontend && npm run dev\""
+  },
+  "dependencies": {
+    "concurrently": "^9.1.0",
+    "dotenv": "^16.4.7"
+  }
+}
