@@ -1,12 +1,16 @@
 import { Box, Button, Grid, Stack } from "@mui/joy";
 import { useState } from "react";
-import { useWordleGame } from "../hooks/useWordleGame";
+import { useReadGameGuess } from "../hooks/useReadGameGuess";
+import { useWriteGameContract } from "../hooks/useWriteGameContract";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export const GameBoard = () => {
   const [word, setWord] = useState<string>("");
-  const { makeGuess, isPending } = useWordleGame();
+  const guess = word.toUpperCase();
+
+  const { makeGuess, isPending } = useWriteGameContract();
+  const { readGuess } = useReadGameGuess(guess);
 
   const handleLetterClick = (letter: string) => {
     if (word.length < 5) setWord(prev => prev + letter);
@@ -18,10 +22,11 @@ export const GameBoard = () => {
 
   const handleSubmit = async () => {
     try {
-      makeGuess(word.toUpperCase());
+      makeGuess(guess);
     } catch (err: any) {
       console.error(err);
     } finally {
+      console.log(readGuess);
       setWord("");
     }
   };

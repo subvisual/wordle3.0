@@ -1,13 +1,13 @@
 import { useWriteContract } from "wagmi";
 import { WordleGameABI } from "../abis/WordleGame.abi";
-import { GAME_ADDRESS } from "../config/constants";
+import { WORDLE_GAME_ADDRESS } from "../config/constants";
 
-export const useWordleGame = () => {
+export const useWriteGameContract = () => {
   const { writeContract, isPending } = useWriteContract();
 
   const makeGuess = (guess: string) => {
     writeContract({
-      address: GAME_ADDRESS,
+      address: WORDLE_GAME_ADDRESS,
       abi: WordleGameABI,
       functionName: "guess",
       args: [guess]
@@ -16,3 +16,10 @@ export const useWordleGame = () => {
 
   return { makeGuess, isPending };
 };
+
+/*   const result = useSimulateContract({
+    address: GAME_ADDRESS,
+    abi: WordleGameABI,
+    functionName: "guess",
+    args: [word.toUpperCase()]
+  }); */

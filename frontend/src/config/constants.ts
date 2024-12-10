@@ -1,3 +1,4 @@
-export const ANVIL_RPC_URL = import.meta.env.VITE_ANVIL_RPC_URL;
-export const TOKEN_ADDRESS = import.meta.env.VITE_TOKEN_ADDRESS;
-export const GAME_ADDRESS = import.meta.env.VITE_GAME_ADDRESS;
+export const PUBLIC_PROJECT_ID = import.meta.env.VITE_PUBLIC_PROJECT_ID;
+export const RPC_URL = import.meta.env.VITE_RPC_URL;
+export const WORDLE_TOKEN_ADDRESS = import.meta.env.VITE_WORDLE_TOKEN_ADDRESS;
+export const WORDLE_GAME_ADDRESS = import.meta.env.VITE_WORDLE_GAME_ADDRESS;

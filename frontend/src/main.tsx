@@ -9,18 +9,14 @@ import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { http, WagmiProvider } from "wagmi";
 import { anvil, sepolia } from "wagmi/chains";
-
-const projectId = import.meta.env.VITE_PUBLIC_PROJECT_ID;
-if (!projectId) {
-  throw new Error("Project Id is not defined.");
-}
+import { PUBLIC_PROJECT_ID, RPC_URL } from "./config/constants";
 
 const config = getDefaultConfig({
   appName: "Wordle",
-  projectId: projectId,
+  projectId: PUBLIC_PROJECT_ID,
   chains: [sepolia, anvil],
   transports: {
-    [anvil.id]: http(import.meta.env.VITE_ANVIL_RPC_URL)
+    [anvil.id]: http(RPC_URL)
   }
 });
 
