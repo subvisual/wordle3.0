@@ -318,4 +318,4 @@ export const WordleTokenABI = [
       }
     ]
   }
-];
+] as const;

@@ -8,6 +8,12 @@ import { IsLoading } from "./IsLoading";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
+const LETTER_BG_COLORS = {
+  2: "green",
+  1: "orange",
+  0: "grey"
+};
+
 export const GameBoard = () => {
   // States
   const [guess, setGuess] = useState<string>("");
@@ -18,29 +24,46 @@ export const GameBoard = () => {
     handleSubmitGuess,
     hasWaitedForGuess,
     getUserGuessesArray,
+    getLetterStatusesArray,
     hasUserGuessedCorrectly,
     isLoading: isLoadingGame
   } = useGameContract({ guess });
 
-  // Game Logic
+  // Function to Add Letters
   const handleLetterClick = (letter: string) => {
     if (guess.length < 5) setGuess(prev => prev + letter);
   };
 
+  // Function to Delete Letters
   const handleDelete = () => {
     if (guess.length > 0) setGuess(prev => prev.slice(0, -1));
   };
 
-  const guessesToShow = [];
-  for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
-    if (i < getUserGuessesArray.length) {
-      guessesToShow.push(getUserGuessesArray[i]);
-    } else if (i === getUserGuessesArray.length) {
+  // Function to Get User Guesses
+  const getGuesses = () => {
+    // This adds the rows of the user's previous guesses
+    const guessesToShow = [...getUserGuessesArray];
+    // This adds the row where the user is typing the current guess
+    if (guessesToShow.length < NUMBER_OF_GUESSES) {
       guessesToShow.push(guess.padEnd(5, " "));
-    } else {
+    }
+    // This adds aditional empty rows until NUMBER_OF_GUESSES is matched
+    while (guessesToShow.length < NUMBER_OF_GUESSES) {
       guessesToShow.push("".padEnd(5, " "));
     }
-  }
+    return guessesToShow;
+  };
+
+  // Function To Get Letters Background Color Based on Correctness
+  const getLettersBgColor = (
+    rowIndex: number,
+    colIndex: number,
+    array: { data: number[] }[],
+    colors: object
+  ): string => {
+    const status = array[rowIndex]?.data?.[colIndex];
+    return status !== undefined ? colors[status as keyof typeof colors] : "transparent";
+  };
 
   // Use Effects
   useEffect(() => {
@@ -61,26 +84,34 @@ export const GameBoard = () => {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Guesses */}
           <Stack component="section" sx={{ gap: 1 }}>
-            {guessesToShow.map((rowGuess: string, rowIndex: number) => (
+            {getGuesses().map((rowGuess: string, rowIndex: number) => (
               <Grid container key={rowIndex} sx={{ justifyContent: "center", gap: 1 }}>
-                {Array.from(rowGuess).map((letter, colIndex) => (
-                  <Box
-                    key={colIndex}
-                    sx={{
-                      height: 60,
-                      width: 60,
-                      border: "1px solid",
-                      borderColor: rowIndex >= getUserGuessesArray.length ? "black" : "lightGrey",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      fontSize: 32,
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {letter.trim().toUpperCase()}
-                  </Box>
-                ))}
+                {Array.from(rowGuess).map((letter, colIndex) => {
+                  const backgroundColor = getLettersBgColor(
+                    rowIndex,
+                    colIndex,
+                    getLetterStatusesArray,
+                    LETTER_BG_COLORS
+                  );
+                  return (
+                    <Box
+                      key={colIndex}
+                      sx={{
+                        backgroundColor,
+                        height: 60,
+                        width: 60,
+                        border: "1px solid",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        fontSize: 32,
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {letter.trim().toUpperCase()}
+                    </Box>
+                  );
+                })}
               </Grid>
             ))}
           </Stack>

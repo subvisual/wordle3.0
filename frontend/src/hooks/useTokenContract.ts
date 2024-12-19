@@ -20,7 +20,7 @@ export const useTokenContract = () => {
         address: WORDLE_TOKEN_ADDRESS,
         abi: WordleTokenABI,
         functionName: "approve",
-        args: [WORDLE_GAME_ADDRESS, 10 * 10 ** 18]
+        args: [WORDLE_GAME_ADDRESS, BigInt(10 * 10 ** 18)]
       });
       toast.success("Tokens approved successfully!", { closeOnClick: true });
     } catch (err: any) {
@@ -35,7 +35,7 @@ export const useTokenContract = () => {
     abi: WordleTokenABI,
     address: WORDLE_TOKEN_ADDRESS,
     functionName: "allowance",
-    args: [userAddress, WORDLE_GAME_ADDRESS]
+    args: [userAddress as `0x${string}`, WORDLE_GAME_ADDRESS]
   });
 
   const allowance = allowanceObj?.data ? Number(allowanceObj.data) / 10 ** TOKEN_DECIMALS : 0;
