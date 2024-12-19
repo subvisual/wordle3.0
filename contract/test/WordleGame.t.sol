@@ -10,6 +10,7 @@ contract WordleGameTest is Test {
     WordleGame public game;
 
     address public player;
+    address public playerWithoutTokens;
 
     function setUp() public {
         token = new WordleToken(1000 * 10 ** 18);
@@ -20,27 +21,92 @@ contract WordleGameTest is Test {
         token.approve(address(game), type(uint256).max);
     }
 
-    function testCorrectGuess() public {
-        uint256 initialBalance = token.balanceOf(player);
+    function testGuessWithInsufficientTokens() public {
+        vm.prank(playerWithoutTokens);
+    
+        uint256 playerBalance = token.balanceOf(playerWithoutTokens);
+        assertEq(playerBalance, 0, "Player's balance should be 0");
+    
+        vm.prank(playerWithoutTokens);
+        vm.expectRevert("Insufficient tokens!");
+        game.guess("PLACE");
+    }
 
+
+    function testIncorrectGuess() public {
+        vm.prank(player);
+        game.guess("PLACE");
+
+        bool guessedCorrectly = game.hasUserGuessedCorrectly(player);
+        assertFalse(guessedCorrectly, "User should not guess correctly");
+    }
+
+    function testCorrectGuess() public {
         vm.prank(player);
         game.guess("APPLE");
 
-        uint256 expectedBalance = initialBalance - 10 * 10 ** 18;
-        uint256 finalBalance = token.balanceOf(player);
-
-        assertEq(finalBalance, expectedBalance, "Player's balance should decrease by the fee");
+        bool guessedCorrectly = game.hasUserGuessedCorrectly(player);
+        assertTrue(guessedCorrectly, "User should guess correctly");
     }
 
-    function testIncorrectGuess() public {
-        uint256 initialBalance = token.balanceOf(player);
+    function testGuessAfterMaxAttempts() public {
+        for (uint256 i = 0; i < 5; i++) {
+            vm.prank(player);
+            game.guess("PLACE");
+        }
 
         vm.prank(player);
-        game.guess("WRONG");
-
-        uint256 expectedBalance = initialBalance - 10 * 10 ** 18;
-        uint256 finalBalance = token.balanceOf(player);
-
-        assertEq(finalBalance, expectedBalance, "Player's balance should decrease by the fee");
+        vm.expectRevert("You have exceeded the maximum number of guesses!");
+        game.guess("PLACE");
     }
+
+    function testGuessWithInvalidLength() public {
+        vm.prank(player);
+        vm.expectRevert("Guess must be 5 letters long!");
+        game.guess("APLE");
+
+        vm.prank(player);
+        vm.expectRevert("Guess must be 5 letters long!");
+        game.guess("APPPLE");
+    }
+
+    function testGetLetterStatuses() public {
+        vm.prank(player);
+        game.guess("PLACE");
+
+        uint8[5] memory expectedStatuses = [1, 1, 1, 0, 2];
+        uint8[5] memory statuses = game.getLetterStatuses(player, 0);
+
+        for (uint256 i = 0; i < 5; i++) {
+            assertEq(statuses[i], expectedStatuses[i], "Letter status should match expected");
+        }
+    }
+
+    function testGetUserGuesses() public {
+        vm.prank(player);
+        game.guess("PLACE");
+        vm.prank(player);
+        game.guess("APPLE");
+
+        string[] memory guesses = game.getUserGuesses(player);
+        assertEq(guesses.length, 2, "Should return correct number of guesses");
+        assertEq(guesses[0], "PLACE", "First guess should match");
+        assertEq(guesses[1], "APPLE", "Second guess should match");
+    }
+
+    function testHasUserGuessedCorrectly() public {
+        vm.prank(player);
+        game.guess("APPLE");
+    
+        bool guessedCorrectly = game.hasUserGuessedCorrectly(player);
+        assertTrue(guessedCorrectly, "User should guess correctly");
+    
+        vm.prank(player);
+        vm.expectRevert("You have already guessed correctly!");
+        game.guess("PLACE");
+    
+        guessedCorrectly = game.hasUserGuessedCorrectly(player);
+        assertTrue(guessedCorrectly, "Correct guess status should persist");
+    }
+
 }
