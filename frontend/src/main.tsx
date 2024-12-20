@@ -12,6 +12,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { http, WagmiProvider } from "wagmi";
 import { anvil, sepolia } from "wagmi/chains";
 import { PUBLIC_PROJECT_ID, RPC_URL } from "./config/constants";
+import { theme } from "./utils/theme";
 
 const rainbowkitConfig = getDefaultConfig({
   appName: "Wordle",
@@ -29,7 +30,7 @@ createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={rainbowkitConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <CssVarsProvider>
+          <CssVarsProvider theme={theme} defaultMode="dark">
             <CssBaseline />
             <BrowserRouter>
               <App />
