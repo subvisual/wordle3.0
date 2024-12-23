@@ -1,10 +1,10 @@
 import { Box, Button, Grid, Stack } from "@mui/joy";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { NUMBER_OF_GUESSES } from "../config/constants";
-import { useGameContract } from "../hooks/useGameContract";
-import { useTokenContract } from "../hooks/useTokenContract";
-import { IsLoading } from "./IsLoading";
+import { NUMBER_OF_GUESSES } from "../../config/constants";
+import { useGameContract } from "../../hooks/useGameContract";
+import { useTokenContract } from "../../hooks/useTokenContract";
+import { IsLoading } from "../shared/IsLoading";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
