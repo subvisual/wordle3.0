@@ -28,7 +28,13 @@ export const GameBoard = () => {
     if (guess.length < 5) setGuess(prev => prev + letter);
   };
 
-  const handleDelete = () => {
+  // Function to Clear Letters
+  const handleLetterClear = () => {
+    if (guess.length > 0) setGuess("");
+  };
+
+  // Function to Delete Letters
+  const handleLetterDelete = () => {
     if (guess.length > 0) setGuess(prev => prev.slice(0, -1));
   };
 
@@ -132,11 +138,16 @@ export const GameBoard = () => {
               </Grid>
             ))}
             <Grid xs={2}>
-              <Button size="lg" fullWidth onClick={handleDelete} color="neutral" disabled={isLoadingGame}>
-                Delete
+              <Button size="lg" fullWidth onClick={handleLetterClear} color="neutral" disabled={isLoadingGame}>
+                Clear
               </Button>
             </Grid>
             <Grid xs={2}>
+              <Button size="lg" fullWidth onClick={handleLetterDelete} color="neutral" disabled={isLoadingGame}>
+                Delete
+              </Button>
+            </Grid>
+            <Grid xs={12}>
               <Button
                 size="lg"
                 fullWidth
