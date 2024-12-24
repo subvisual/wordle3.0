@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Stack } from "@mui/joy";
+import { Box, Button, Grid, Stack, Typography } from "@mui/joy";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { NUMBER_OF_GUESSES } from "../../config/constants";
@@ -70,7 +70,7 @@ export const GameBoard = () => {
                       height: 60,
                       width: 60,
                       border: "1px solid",
-                      borderColor: rowIndex >= getUserGuessesArray.length ? "black" : "lightGrey",
+                      borderColor: "neutral.700",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -78,7 +78,9 @@ export const GameBoard = () => {
                       fontWeight: "bold"
                     }}
                   >
-                    {letter.trim().toUpperCase()}
+                    <Typography level="h2" sx={{ color: "neutral.50" }}>
+                      {letter.trim().toUpperCase()}
+                    </Typography>
                   </Box>
                 ))}
               </Grid>
@@ -94,6 +96,7 @@ export const GameBoard = () => {
               color="success"
               loading={isLoadingToken || isLoadingGame}
               disabled={allowance > 0}
+              sx={{ bgcolor: "success.700" }}
             >
               Approve Tokens
             </Button>
@@ -136,6 +139,7 @@ export const GameBoard = () => {
                 color="success"
                 disabled={guess.length < 5}
                 loading={isLoadingGame}
+                sx={{ bgcolor: "success.700" }}
               >
                 Submit
               </Button>
