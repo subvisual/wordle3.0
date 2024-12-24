@@ -1,10 +1,10 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Container } from "../components/shared/container";
+import { MainContainer } from "../components/shared/container";
 
 export const LandingPage = () => {
   return (
-    <Container>
+    <MainContainer>
       <ConnectButton />
-    </Container>
+    </MainContainer>
   );
 };
