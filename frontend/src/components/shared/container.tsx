@@ -5,10 +5,10 @@ type Props = {
   children: ReactNode;
 };
 
-export const Container = ({ children }: Props) => {
+export const MainContainer = ({ children }: Props) => {
   return (
     <Stack sx={{ width: "100%", alignItems: "center" }}>
-      <Stack component="main" sx={{ maxWidth: { xs: "90%", sm: 400 }, alignItems: "center", mt: 2, gap: 4 }}>
+      <Stack component="main" sx={{ maxWidth: { xs: "90%", sm: 500 }, alignItems: "center", mt: 2, gap: 4 }}>
         {children}
       </Stack>
     </Stack>
