@@ -5,7 +5,6 @@ import { GameApprove } from "../components/layout/game-approve";
 import { GameGuess } from "../components/layout/game-guess";
 import { GameKeyboard } from "../components/layout/game-keyboard";
 import { MainContainer } from "../components/shared/container";
-import { IsLoading } from "../components/shared/IsLoading";
 import { useGameContract } from "../hooks/useGameContract";
 import { useTokenContract } from "../hooks/useTokenContract";
 
@@ -19,36 +18,35 @@ export const GamePage = () => {
     handleSubmitGuess,
     getUserGuessesArray,
     getLetterStatusesArray,
+    hasUserGuessedCorrectly,
     isLoading: isLoadingGame
   } = useGameContract({ guess });
 
   return (
     <MainContainer>
       <ConnectButton />
-      {isLoadingGame ? (
-        <IsLoading />
-      ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <GameGuess
-            guess={guess}
-            getUserGuessesArray={getUserGuessesArray}
-            getLetterStatusesArray={getLetterStatusesArray}
-          />
-          <GameApprove
-            handleApproveTokens={handleApproveTokens}
-            handleCheckAllowance={handleCheckAllowance}
-            allowance={allowance}
-            isLoading={isLoadingToken || isLoadingGame}
-          />
-          <GameKeyboard
-            guess={guess}
-            setGuess={setGuess}
-            isLoadingGame={isLoadingGame}
-            handleSubmitGuess={handleSubmitGuess}
-            allowance={allowance}
-          />
-        </Box>
-      )}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <GameGuess
+          guess={guess}
+          getUserGuessesArray={getUserGuessesArray}
+          getLetterStatusesArray={getLetterStatusesArray}
+        />
+        <GameApprove
+          handleApproveTokens={handleApproveTokens}
+          handleCheckAllowance={handleCheckAllowance}
+          allowance={allowance}
+          isLoadingToken={isLoadingToken}
+          isLoadingGame={isLoadingGame}
+        />
+        <GameKeyboard
+          guess={guess}
+          setGuess={setGuess}
+          handleSubmitGuess={handleSubmitGuess}
+          allowance={allowance}
+          hasUserGuessedCorrectly={hasUserGuessedCorrectly}
+          isLoadingGame={isLoadingGame}
+        />
+      </Box>
     </MainContainer>
   );
 };

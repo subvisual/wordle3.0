@@ -47,7 +47,7 @@ export const GameGuess = ({ guess, getUserGuessesArray, getLetterStatusesArray }
                 key={colIndex}
                 component={motion.div}
                 initial={{ scale: 1 }}
-                animate={isCurrentRow && letter.trim() && { scale: [1, 1.2, 1] }}
+                animate={isCurrentRow && letter.trim() && { scale: [1, 1.1, 1] }}
                 transition={{ duration: 0.1 }}
                 sx={{
                   color: "#F8F8ED",

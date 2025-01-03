@@ -4,10 +4,17 @@ type GameApproveProps = {
   handleApproveTokens: () => void;
   handleCheckAllowance: () => void;
   allowance: number;
-  isLoading: boolean;
+  isLoadingToken: boolean;
+  isLoadingGame: boolean;
 };
 
-export const GameApprove = ({ handleApproveTokens, handleCheckAllowance, allowance, isLoading }: GameApproveProps) => {
+export const GameApprove = ({
+  handleApproveTokens,
+  handleCheckAllowance,
+  allowance,
+  isLoadingToken,
+  isLoadingGame
+}: GameApproveProps) => {
   return (
     <Stack component="section" sx={{ flexDirection: "row", gap: 1 }}>
       <Button
@@ -15,13 +22,19 @@ export const GameApprove = ({ handleApproveTokens, handleCheckAllowance, allowan
         fullWidth
         onClick={handleApproveTokens}
         color="success"
-        loading={isLoading}
-        disabled={allowance > 0}
+        disabled={allowance > 0 || isLoadingGame}
+        loading={isLoadingToken}
         sx={{ bgcolor: "success.700" }}
       >
-        Approve Tokens
+        {allowance > 0 ? "Approved" : "Approve Tokens"}
       </Button>
-      <Button size="lg" fullWidth onClick={handleCheckAllowance} color="neutral" loading={isLoading}>
+      <Button
+        size="lg"
+        fullWidth
+        onClick={handleCheckAllowance}
+        color="neutral"
+        disabled={isLoadingToken || isLoadingGame}
+      >
         Check Allowance
       </Button>
     </Stack>

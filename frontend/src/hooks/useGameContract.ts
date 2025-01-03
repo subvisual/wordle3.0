@@ -122,6 +122,7 @@ export const useGameContract = ({ guess }: UseGameContractProps) => {
     handleSubmitGuess,
     getUserGuessesArray,
     getLetterStatusesArray,
+    hasUserGuessedCorrectly,
     isLoading: isLoading || isLoadingGuesses || isLoadingCorrect || isLoadingStatusesData
   };
 };

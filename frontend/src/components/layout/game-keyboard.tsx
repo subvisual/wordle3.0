@@ -3,12 +3,20 @@ import { Button, Stack } from "@mui/joy";
 type GameKeyboardProps = {
   guess: string;
   setGuess: (value: string | ((value: string) => string)) => void;
-  isLoadingGame: boolean;
   handleSubmitGuess: (allowance: number, onSuccess?: () => void) => void;
   allowance: number;
+  hasUserGuessedCorrectly: boolean;
+  isLoadingGame: boolean;
 };
 
-export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess, allowance }: GameKeyboardProps) => {
+export const GameKeyboard = ({
+  guess,
+  setGuess,
+  handleSubmitGuess,
+  allowance,
+  hasUserGuessedCorrectly,
+  isLoadingGame
+}: GameKeyboardProps) => {
   const ROW1 = "QWERTYUIOP".split("");
   const ROW2 = "ASDFGHJKL".split("");
   const ROW3 = "ZXCVBNM".split("");
@@ -23,6 +31,7 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
 
   const lettersSize = { width: 40, height: 55 };
   const actionsSize = { width: 62, height: 55 };
+  const isDisabled = allowance <= 0 || hasUserGuessedCorrectly || isLoadingGame ? true : false;
 
   return (
     <Stack component="section" sx={{ justifyContent: "center", gap: 0.5 }}>
@@ -32,7 +41,7 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
             key={letter}
             onClick={() => handleLetterClick(letter)}
             color="neutral"
-            disabled={isLoadingGame}
+            disabled={isDisabled}
             sx={lettersSize}
           >
             {letter}
@@ -45,7 +54,7 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
             key={letter}
             onClick={() => handleLetterClick(letter)}
             color="neutral"
-            disabled={isLoadingGame}
+            disabled={isDisabled}
             sx={lettersSize}
           >
             {letter}
@@ -53,7 +62,7 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
         ))}
       </Stack>
       <Stack sx={{ justifyContent: "center", flexDirection: "row", gap: 0.5 }}>
-        <Button onClick={handleDelete} color="neutral" disabled={isLoadingGame} sx={actionsSize}>
+        <Button onClick={handleDelete} color="neutral" disabled={isDisabled || guess.length <= 0} sx={actionsSize}>
           Delete
         </Button>
         {ROW3.map(letter => (
@@ -61,7 +70,7 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
             key={letter}
             onClick={() => handleLetterClick(letter)}
             color="neutral"
-            disabled={isLoadingGame}
+            disabled={isDisabled}
             sx={lettersSize}
           >
             {letter}
@@ -74,7 +83,7 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
             })
           }
           color="success"
-          disabled={guess.length < 5}
+          disabled={isDisabled || guess.length < 5}
           loading={isLoadingGame}
           sx={{ ...actionsSize, bgcolor: "success.700" }}
         >
