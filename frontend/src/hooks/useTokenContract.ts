@@ -20,7 +20,7 @@ export const useTokenContract = () => {
         address: WORDLE_TOKEN_ADDRESS,
         abi: WordleTokenABI,
         functionName: "approve",
-        args: [WORDLE_GAME_ADDRESS, BigInt(10 * 10 ** 18)]
+        args: [WORDLE_GAME_ADDRESS, BigInt(5 * 10 ** 18)]
       });
       toast.success("Tokens approved successfully!", { closeOnClick: true });
     } catch (err: any) {

@@ -6,7 +6,7 @@ import "./WordleToken.sol";
 contract WordleGame {
 	address public token;
 	string private constant FIXED_WORD = "APPLE";
-	uint256 public constant GUESS_FEE = 10 * 10 ** 18;
+	uint256 public constant GUESS_FEE = 1 * 10 ** 18;
 	uint256 public constant MAX_ATTEMPTS = 5;
 
 	// Mapping to store all guesses per user

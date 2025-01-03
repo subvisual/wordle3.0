@@ -16,7 +16,7 @@ contract WordleGameTest is Test {
 		token = new WordleToken(1000 * 10 ** 18);
 		game = new WordleGame(address(token));
 		player = address(0x123);
-		token.transfer(player, 100 * 10 ** 18);
+		token.transfer(player, 10 * 10 ** 18);
 		vm.prank(player);
 		token.approve(address(game), type(uint256).max);
 	}

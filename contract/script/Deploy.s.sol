@@ -23,7 +23,7 @@ contract Deploy is Script {
 		console.log("Wordle Game deployed at:", address(game));
 
 		// Transfer tokens to the user's address
-		token.transfer(playerAddress, 100 * 10 ** 18);
+		token.transfer(playerAddress, 10 * 10 ** 18);
 		console.log("100 tokens transferred to user address:", playerAddress);
 
 		vm.stopBroadcast();
