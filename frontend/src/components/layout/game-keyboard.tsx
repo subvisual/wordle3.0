@@ -2,9 +2,9 @@ import { Button, Stack } from "@mui/joy";
 
 type GameKeyboardProps = {
   guess: string;
-  setGuess: (prev: (prev: string) => string) => void;
+  setGuess: (value: string | ((value: string) => string)) => void;
   isLoadingGame: boolean;
-  handleSubmitGuess: (allowance: number) => void;
+  handleSubmitGuess: (allowance: number, onSuccess?: () => void) => void;
   allowance: number;
 };
 
@@ -68,7 +68,11 @@ export const GameKeyboard = ({ guess, setGuess, isLoadingGame, handleSubmitGuess
           </Button>
         ))}
         <Button
-          onClick={() => handleSubmitGuess(allowance)}
+          onClick={() =>
+            handleSubmitGuess(allowance, () => {
+              setGuess("");
+            })
+          }
           color="success"
           disabled={guess.length < 5}
           loading={isLoadingGame}
