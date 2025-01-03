@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAccount, useReadContract, useReadContracts, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WordleGameABI } from "../abis/WordleGame.abi";
 import { WORDLE_GAME_ADDRESS } from "../config/constants";
+import { useTokenContract } from "./useTokenContract";
 
 type UseGameContractProps = {
   guess: string;
@@ -16,24 +17,33 @@ export const useGameContract = ({ guess }: UseGameContractProps) => {
   // Hooks
   const { address: userAddress } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { refetchAllowance } = useTokenContract();
 
   // Read User Guesses
-  const { data: getUserGuesses, isLoading: isLoadingGuesses } = useReadContract({
+  const {
+    data: getUserGuesses,
+    refetch: refetchUserGuesses,
+    isLoading: isLoadingGuesses
+  } = useReadContract({
     abi: WordleGameABI,
     address: WORDLE_GAME_ADDRESS,
     functionName: "getUserGuesses",
     args: [userAddress as `0x${string}`]
-  }) as { data: string[]; isLoading: boolean };
+  }) as { data: string[]; refetch: () => void; isLoading: boolean };
 
   const getUserGuessesArray: string[] = Array.isArray(getUserGuesses) ? getUserGuesses : [];
 
   // Read Has User Guessed Correctly
-  const { data: hasUserGuessedCorrectly, isLoading: isLoadingCorrect } = useReadContract({
+  const {
+    data: hasUserGuessedCorrectly,
+    refetch: refetchCorrect,
+    isLoading: isLoadingCorrect
+  } = useReadContract({
     abi: WordleGameABI,
     address: WORDLE_GAME_ADDRESS,
     functionName: "hasUserGuessedCorrectly",
     args: [userAddress as `0x${string}`]
-  }) as { data: boolean; isLoading: boolean };
+  }) as { data: boolean; refetch: () => void; isLoading: boolean };
 
   // Read Letter Statuses
   const getLetterStatusesMap =
@@ -49,7 +59,11 @@ export const useGameContract = ({ guess }: UseGameContractProps) => {
         )
       : [];
 
-  const { data: getLetterStatusesData, isLoading: isLoadingStatusesData } = useReadContracts({
+  const {
+    data: getLetterStatusesData,
+    refetch: refetchLetterStatuses,
+    isLoading: isLoadingStatusesData
+  } = useReadContracts({
     contracts: getLetterStatusesMap
   });
 
@@ -57,7 +71,7 @@ export const useGameContract = ({ guess }: UseGameContractProps) => {
     getLetterStatusesData?.map(item => (item.result ? { data: Array.from(item.result) } : { data: [] })) || [];
 
   // Handle Submit Guess Button
-  const handleSubmitGuess = async (allowance: number) => {
+  const handleSubmitGuess = async (allowance: number, onSuccess?: () => void) => {
     setIsLoading(true);
     try {
       switch (true) {
@@ -78,6 +92,9 @@ export const useGameContract = ({ guess }: UseGameContractProps) => {
             args: [guess]
           });
           setHash(response);
+          if (onSuccess) {
+            onSuccess();
+          }
       }
     } catch (err: any) {
       toast.error("Failed to submit guess. Please try again.", { closeOnClick: true });
@@ -90,12 +107,21 @@ export const useGameContract = ({ guess }: UseGameContractProps) => {
   // Handle Wait For Transaction Receipt
   const { isSuccess: hasWaitedForGuess } = useWaitForTransactionReceipt({ hash });
 
+  // Trigger refetch
+  useEffect(() => {
+    if (hasWaitedForGuess) {
+      refetchUserGuesses();
+      refetchCorrect();
+      refetchLetterStatuses();
+      refetchAllowance();
+      toast.success("Guess submitted successfully!", { closeOnClick: true });
+    }
+  }, [hasWaitedForGuess, refetchUserGuesses, refetchCorrect, refetchLetterStatuses]);
+
   return {
     handleSubmitGuess,
-    hasWaitedForGuess,
     getUserGuessesArray,
     getLetterStatusesArray,
-    hasUserGuessedCorrectly,
     isLoading: isLoading || isLoadingGuesses || isLoadingCorrect || isLoadingStatusesData
   };
 };

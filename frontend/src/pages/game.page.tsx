@@ -1,7 +1,6 @@
 import { Box } from "@mui/joy";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
 import { GameApprove } from "../components/layout/game-approve";
 import { GameGuess } from "../components/layout/game-guess";
 import { GameKeyboard } from "../components/layout/game-keyboard";
@@ -18,23 +17,10 @@ export const GamePage = () => {
   const { handleApproveTokens, handleCheckAllowance, allowance, isLoading: isLoadingToken } = useTokenContract();
   const {
     handleSubmitGuess,
-    hasWaitedForGuess,
     getUserGuessesArray,
     getLetterStatusesArray,
-    hasUserGuessedCorrectly,
     isLoading: isLoadingGame
   } = useGameContract({ guess });
-
-  // Use Effects
-  useEffect(() => {
-    if (hasWaitedForGuess) {
-      if (hasUserGuessedCorrectly) {
-        toast.success(`Your guess was correct!!`, { closeOnClick: true });
-      } else {
-        toast.error(`Your guess was incorrect...`, { closeOnClick: true });
-      }
-    }
-  }, [hasWaitedForGuess, hasUserGuessedCorrectly]);
 
   return (
     <MainContainer>
