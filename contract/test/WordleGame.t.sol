@@ -16,7 +16,7 @@ contract WordleGameTest is Test {
 	// Function to setup the tests
 	function setUp() public {
 		// Deploy the WordleToken contract and WordleGame contract
-		token = new WordleToken(1000 ether);
+		token = new WordleToken();
 		game = new WordleGame(address(token));
 
 		// Set the admin and player addresses
@@ -24,8 +24,9 @@ contract WordleGameTest is Test {
 		player = address(0x123);
 		playerWithoutTokens = address(0x456);
 
-		// Transfer tokens to the player and approve the game contract
-		token.transfer(player, 10 ether);
+		// Mint tokens for the player and approve the game contract
+		vm.prank(player);
+		token.mintTokens();
 		vm.prank(player);
 		token.approve(address(game), type(uint256).max);
 
