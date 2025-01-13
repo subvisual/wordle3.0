@@ -10,14 +10,12 @@ contract Deploy is Script {
 	function run() external {
 		// Load environment variables
 		uint256 deployerPrivateKey = vm.envUint("DEPLOYER_KEY");
-		address admin = vm.envAddress("ADMIN_KEY");
-		address player = vm.envAddress("PLAYER_KEY");
 
 		// Start broadcasting transactions
 		vm.startBroadcast(deployerPrivateKey);
 
 		// Deploy the WordleToken contract
-		WordleToken token = new WordleToken(1000 ether);
+		WordleToken token = new WordleToken();
 		console.log("Wordle Token deployed at:", address(token));
 
 		// Deploy the WordleGame contract
@@ -28,13 +26,6 @@ contract Deploy is Script {
 		string memory firstWord = "MANGO";
 		game.setWord(firstWord);
 		console.log("Initial word set to:", firstWord);
-
-		// Transfer tokens to the admin and player addresses (for testing purposes)
-		token.transfer(admin, 10 ether);
-		console.log("10 tokens transferred to admin address:", admin);
-
-		token.transfer(player, 10 ether);
-		console.log("10 tokens transferred to player address:", player);
 
 		// Stop broadcasting transactions
 		vm.stopBroadcast();

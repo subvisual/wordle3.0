@@ -12,6 +12,32 @@ export const WordleTokenABI = [
   },
   {
     type: "function",
+    name: "AMOUNT_PER_MINT",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256"
+      }
+    ],
+    stateMutability: "view"
+  },
+  {
+    type: "function",
+    name: "MAX_AMOUNT_PER_ADDRESS",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256"
+      }
+    ],
+    stateMutability: "view"
+  },
+  {
+    type: "function",
     name: "allowance",
     inputs: [
       {
@@ -86,6 +112,32 @@ export const WordleTokenABI = [
         name: "",
         type: "uint8",
         internalType: "uint8"
+      }
+    ],
+    stateMutability: "view"
+  },
+  {
+    type: "function",
+    name: "mintTokens",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable"
+  },
+  {
+    type: "function",
+    name: "mintedTokens",
+    inputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address"
+      }
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256"
       }
     ],
     stateMutability: "view"

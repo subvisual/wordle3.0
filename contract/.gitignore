@@ -1,3 +1,8 @@
+# Dotenv files
+.env
+.env.development
+.env.production
+
 # Compiler files
 cache/
 out/
@@ -9,9 +14,6 @@ out/
 
 # Docs
 docs/
-
-# Dotenv file
-.env
 
 # Dependencies
 lib/forge-std/
