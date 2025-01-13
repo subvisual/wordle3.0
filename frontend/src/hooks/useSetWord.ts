@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WordleGameABI } from "../abis/WordleGame.abi";
-import { WORDLE_GAME_ADDRESS } from "../config/constants";
+import { ENV_VARS } from "../config/constants";
 import { showToast } from "../utils/toast";
 
-type UseAdminContractProps = {
+type UseSetWordProps = {
   refetchPlayerGuesses: () => void;
   refetchHasPlayerGuessedCorrectly: () => void;
   refetchLetterStatusesData: () => void;
 };
 
-export const useAdminFunction = ({
+export const useSetWord = ({
   refetchPlayerGuesses,
   refetchHasPlayerGuessedCorrectly,
   refetchLetterStatusesData
-}: UseAdminContractProps) => {
+}: UseSetWordProps) => {
   const [hash, setHash] = useState<`0x${string}` | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -23,7 +23,7 @@ export const useAdminFunction = ({
   // Handle check admin address
   const { data: adminAddress } = useReadContract({
     abi: WordleGameABI,
-    address: WORDLE_GAME_ADDRESS,
+    address: ENV_VARS.WORDLE_GAME_ADDRESS,
     functionName: "admin"
   });
 
@@ -37,7 +37,7 @@ export const useAdminFunction = ({
     setIsLoading(true);
     try {
       const response = await writeContractAsync({
-        address: WORDLE_GAME_ADDRESS,
+        address: ENV_VARS.WORDLE_GAME_ADDRESS,
         abi: WordleGameABI,
         functionName: "setWord",
         args: [newWord]

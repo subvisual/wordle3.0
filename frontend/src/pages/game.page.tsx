@@ -6,15 +6,17 @@ import { GameApprove } from "../components/layout/game-approve";
 import { GameGuess } from "../components/layout/game-guess";
 import { GameKeyboard } from "../components/layout/game-keyboard";
 import { MainContainer } from "../components/shared/container";
-import { useAdminFunction } from "../hooks/useAdminFunction";
-import { useGameContract } from "../hooks/useGameContract";
-import { useTokenContract } from "../hooks/useTokenContract";
+import { useApproveTokens } from "../hooks/useApproveTokens";
+import { useMintTokens } from "../hooks/useMintTokens";
+import { usePlayGame } from "../hooks/usePlayGame";
+import { useSetWord } from "../hooks/useSetWord";
 
 export const GamePage = () => {
   const [guess, setGuess] = useState<string>("");
 
   const { address: playerAddress } = useAccount();
-  const { handleApproveTokens, refetchAllowance, allowance, isLoading: isLoadingToken } = useTokenContract();
+  const { refetchBalance } = useMintTokens();
+  const { handleApproveTokens, refetchAllowance, allowance, isLoading: isLoadingToken } = useApproveTokens();
   const {
     handleSubmitGuess,
     refetchPlayerGuesses,
@@ -24,12 +26,12 @@ export const GamePage = () => {
     letterStatusesArray,
     hasPlayerGuessedCorrectly,
     isLoading: isLoadingGame
-  } = useGameContract({ guess, refetchAllowance });
+  } = usePlayGame({ guess, refetchBalance, refetchAllowance });
   const {
     handleSetWord,
     adminAddress,
     isLoading: isLoadingNewWord
-  } = useAdminFunction({ refetchPlayerGuesses, refetchHasPlayerGuessedCorrectly, refetchLetterStatusesData });
+  } = useSetWord({ refetchPlayerGuesses, refetchHasPlayerGuessedCorrectly, refetchLetterStatusesData });
   const isDisabled = isLoadingNewWord || isLoadingToken || isLoadingGame;
 
   return (

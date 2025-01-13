@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAccount, useReadContract, useReadContracts, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WordleGameABI } from "../abis/WordleGame.abi";
-import { WORDLE_GAME_ADDRESS } from "../config/constants";
+import { ENV_VARS } from "../config/constants";
 import { showToast } from "../utils/toast";
 
-type UseGameContractProps = {
+type UseUsePlayGameProps = {
   guess: string;
+  refetchBalance: () => void;
   refetchAllowance: () => void;
 };
 
-export const useGameContract = ({ guess, refetchAllowance }: UseGameContractProps) => {
+export const usePlayGame = ({ guess, refetchBalance, refetchAllowance }: UseUsePlayGameProps) => {
   const [hash, setHash] = useState<`0x${string}` | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -23,7 +24,7 @@ export const useGameContract = ({ guess, refetchAllowance }: UseGameContractProp
     isLoading: isLoadingPlayerGuesses
   } = useReadContract({
     abi: WordleGameABI,
-    address: WORDLE_GAME_ADDRESS,
+    address: ENV_VARS.WORDLE_GAME_ADDRESS,
     functionName: "getPlayerGuesses",
     args: [playerAddress as `0x${string}`]
   }) as { data: string[]; refetch: () => void; isLoading: boolean };
@@ -37,7 +38,7 @@ export const useGameContract = ({ guess, refetchAllowance }: UseGameContractProp
     isLoading: isLoadingHasPlayerGuessedCorrectly
   } = useReadContract({
     abi: WordleGameABI,
-    address: WORDLE_GAME_ADDRESS,
+    address: ENV_VARS.WORDLE_GAME_ADDRESS,
     functionName: "getHasPlayerGuessedCorrectly",
     args: [playerAddress as `0x${string}`]
   }) as { data: boolean; refetch: () => void; isLoading: boolean };
@@ -49,7 +50,7 @@ export const useGameContract = ({ guess, refetchAllowance }: UseGameContractProp
           (_, index) =>
             ({
               abi: WordleGameABI,
-              address: WORDLE_GAME_ADDRESS,
+              address: ENV_VARS.WORDLE_GAME_ADDRESS,
               functionName: "getLetterStatuses",
               args: [playerAddress as `0x${string}`, BigInt(index)]
             }) as const
@@ -83,7 +84,7 @@ export const useGameContract = ({ guess, refetchAllowance }: UseGameContractProp
           break;
         default:
           const response = await writeContractAsync({
-            address: WORDLE_GAME_ADDRESS,
+            address: ENV_VARS.WORDLE_GAME_ADDRESS,
             abi: WordleGameABI,
             functionName: "makeGuess",
             args: [guess]
@@ -111,6 +112,7 @@ export const useGameContract = ({ guess, refetchAllowance }: UseGameContractProp
       refetchHasPlayerGuessedCorrectly();
       refetchLetterStatusesData();
       refetchAllowance();
+      refetchBalance();
     }
   }, [hasWaitedForGuess, refetchPlayerGuesses, refetchHasPlayerGuessedCorrectly, refetchLetterStatusesData]);
 

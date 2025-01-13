@@ -2,7 +2,8 @@ export const colors = {
   black: "#121213",
   green: "#538D4E",
   yellow: "#B59F3B",
-  grey: "#222529"
+  grey: "#222529",
+  purple: "#7D4E9E"
 };
 
 export const LETTER_BG_COLORS: { [key: number]: string } = {
