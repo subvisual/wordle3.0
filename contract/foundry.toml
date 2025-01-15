@@ -2,4 +2,3 @@
 src = "contracts"
 test = "test"
 libs = ["lib"]
-env = { path = "./.env" }

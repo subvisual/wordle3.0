@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAccount } from "wagmi";
-import { useMint } from "../hooks/useMintTokens";
+import { useMintTokens } from "../hooks/useMintTokens";
 import { GamePage } from "../pages/game.page";
 import { HomePage } from "../pages/home.page";
 
 export const App = () => {
   const { isConnected } = useAccount();
-  const { hasTokens } = useMint();
+  const { hasTokens } = useMintTokens();
 
   return (
     <Routes>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WordleGameABI } from "../abis/WordleGame.abi";
-import { ENV_VARS } from "../config/constants";
+import { useChainAddress } from "../utils/chains";
 import { showToast } from "../utils/toast";
 
 type UseSetWordProps = {
@@ -18,12 +18,13 @@ export const useSetWord = ({
   const [hash, setHash] = useState<`0x${string}` | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const { gameAddress } = useChainAddress();
   const { writeContractAsync } = useWriteContract();
 
   // Handle check admin address
   const { data: adminAddress } = useReadContract({
     abi: WordleGameABI,
-    address: ENV_VARS.WORDLE_GAME_ADDRESS,
+    address: gameAddress,
     functionName: "admin"
   });
 
@@ -37,7 +38,7 @@ export const useSetWord = ({
     setIsLoading(true);
     try {
       const response = await writeContractAsync({
-        address: ENV_VARS.WORDLE_GAME_ADDRESS,
+        address: gameAddress,
         abi: WordleGameABI,
         functionName: "setWord",
         args: [newWord]
