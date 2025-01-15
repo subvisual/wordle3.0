@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { formatEther } from "viem";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WordleTokenABI } from "../abis/WordleToken.abi";
-import { ENV_VARS } from "../config/constants";
+import { useChainAddress } from "../utils/chains";
 import { showToast } from "../utils/toast";
 
 export const useApproveTokens = () => {
@@ -10,14 +10,15 @@ export const useApproveTokens = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { address: playerAddress } = useAccount();
+  const { tokenAddress, gameAddress } = useChainAddress();
   const { writeContractAsync } = useWriteContract();
 
   // Handle check allowance
   const { data, refetch: refetchAllowance } = useReadContract({
     abi: WordleTokenABI,
-    address: ENV_VARS.WORDLE_TOKEN_ADDRESS,
+    address: tokenAddress,
     functionName: "allowance",
-    args: [playerAddress as `0x${string}`, ENV_VARS.WORDLE_GAME_ADDRESS]
+    args: [playerAddress as `0x${string}`, gameAddress]
   });
 
   const allowance = data ? Number(formatEther(data)) : 0;
@@ -28,9 +29,9 @@ export const useApproveTokens = () => {
     try {
       const response = await writeContractAsync({
         abi: WordleTokenABI,
-        address: ENV_VARS.WORDLE_TOKEN_ADDRESS,
+        address: tokenAddress,
         functionName: "approve",
-        args: [ENV_VARS.WORDLE_GAME_ADDRESS, BigInt(5 * 10 ** 18)]
+        args: [gameAddress, BigInt(5 * 10 ** 18)]
       });
       setHash(response);
     } catch (err: any) {

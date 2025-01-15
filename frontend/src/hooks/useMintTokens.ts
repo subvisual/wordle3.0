@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { formatEther } from "viem";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WordleTokenABI } from "../abis/WordleToken.abi";
-import { ENV_VARS } from "../config/constants";
+import { useChainAddress } from "../utils/chains";
 import { showToast } from "../utils/toast";
 
 export const useMintTokens = () => {
@@ -10,12 +10,13 @@ export const useMintTokens = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { address: playerAddress } = useAccount();
+  const { tokenAddress } = useChainAddress();
   const { writeContractAsync } = useWriteContract();
 
   // Handle check balance
   const { data: balanceData, refetch: refetchBalance } = useReadContract({
     abi: WordleTokenABI,
-    address: ENV_VARS.WORDLE_TOKEN_ADDRESS,
+    address: tokenAddress,
     functionName: "balanceOf",
     args: playerAddress ? [playerAddress as `0x${string}`] : undefined
   });
@@ -30,7 +31,7 @@ export const useMintTokens = () => {
     try {
       const response = await writeContractAsync({
         abi: WordleTokenABI,
-        address: ENV_VARS.WORDLE_TOKEN_ADDRESS,
+        address: tokenAddress,
         functionName: "mintTokens"
       });
       setHash(response);
